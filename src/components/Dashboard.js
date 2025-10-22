@@ -2,25 +2,52 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
-    const [userProfile, setUserProfile] = useState('');
+    const [userProfile, setUserProfile] = useState(null);
+
     const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     //Get token from local storage
+    //     const token = localStorage.getItem('authToken');
+
+    //     if (!token) {
+    //         navigate('/login');
+    //         return;
+    //     }
+
+    //     //get details of user using token
+    //     fetch('http://localhost:3001/')
+    //         .then(response => response.json())
+    //         .then(data => setUserProfile(data))
+    //         .catch(error => {
+    //             console.error('Error fetching Profile:', error);
+    //         });
+    //     console.log('profile picture url:', userProfile.profilePictureUrl);
+    // }, [navigate]);
 
     useEffect(() => {
         //Get token from local storage
-        const token = localStorage.getItem('authToken');
+        const fetchdata = async () => {
+            const token = localStorage.getItem('authToken');
 
-        if (!token) {
-            navigate('/login');
-            return;
+            await fetch('http://localhost:3001/dashboard', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then(response => {
+                if (response.status === 401 || response.status === 403) {
+                    console.error('Unauthorized access - redirecting to login');
+                    navigate('/login');
+                    return null;
+                }
+                return response.json();
+            }).then(data => setUserProfile(data));
         }
+        fetchdata();
 
-        //get details of user using token
-        fetch('http://localhost:3001/')
-            .then(response => response.json())
-            .then(data => setUserProfile(data))
-            .catch(error => {
-                console.error('Error fetching Profile:', error);
-            });
+        // console.log('User Profile Loaded: ', userProfile);
+        // console.log('Link 1:', userProfile.links[0].title, 'Url:', userProfile.links[0].url);
+
     }, [navigate]);
 
     const handleLogout = () => {
@@ -101,6 +128,7 @@ function Dashboard() {
 
                                 <div>
                                     {userProfile.links && userProfile.links.map((link, index) => (
+
                                         <a key={index} href={link.url} target="_blank" rel="noopener noreferrer" className="social-link">
                                             <div className="social-content">
                                                 <div className="social-text">

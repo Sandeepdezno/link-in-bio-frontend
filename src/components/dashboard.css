@@ -166,6 +166,7 @@
     color: white;
     margin-bottom: 1rem;
     transition: all 0.3s ease;
+    background: linear-gradient(135deg, #f56040, #e1306c, #833ab4);
 }
 
 .social-link:hover {
@@ -200,6 +201,7 @@
 .social-content {
     display: flex;
     align-items: center;
+    background: linear-gradient(135deg, #f56040, #e1306c, #833ab4);
 }
 
 .social-icon {
